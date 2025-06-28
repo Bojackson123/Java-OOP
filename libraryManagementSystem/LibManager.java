@@ -28,7 +28,19 @@ public class LibManager {
         if (!this.isInBookMap(bookName)) {
             throw new IllegalArgumentException("Book: '" + bookName + "' not found!");
         }
-        return this.bookMap.get(bookName);
+        return new ArrayList<>(this.bookMap.getOrDefault(bookName, new ArrayList<>()));
+    }
+
+    public boolean bookIsAvailable(String bookName) {
+        try {
+            int bookCount = this.amountBooksByName(bookName);
+            if (bookCount > 0) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public int amountBooksByName(String bookName) {
@@ -37,6 +49,16 @@ public class LibManager {
         }
         ArrayList<Book> bookList = this.bookMap.get(bookName);
         return bookList.size();
+    }
+
+    public void barrowBook(String bookName, String userName) {
+        if (this.isInBookMap(bookName) && this.userInMapByName(userName) && this.bookIsAvailable(bookName)) {
+            ArrayList<Book> bookList = this.bookMap.get(bookName);
+            Book bookObj = bookList.remove(bookList.size() - 1);
+
+            User userObj = this.getUserByName(userName);
+            userMap.get(userObj).add(bookObj);
+        }
     }
 
     // --- USER CURD OPERATIONS ---
@@ -58,6 +80,24 @@ public class LibManager {
     //      --- USERS ---
     private boolean isInUserMap(User userObj) { // checks if userObj.name is in userMap due to @Overrides in User Class
         return this.userMap.containsKey(userObj);
+    }
+
+    private User getUserByName(String name) {
+        for (User key : this.userMap.keySet()) {
+            if (key.getUserName().equals(name)){
+                return key;
+            } 
+        }
+        return null;
+    }
+
+    private boolean userInMapByName(String name) {
+        for (User key : this.userMap.keySet()) {
+            if (key.getUserName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //     --- BOOKS ---
