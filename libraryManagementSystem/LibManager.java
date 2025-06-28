@@ -53,11 +53,23 @@ public class LibManager {
 
     public void barrowBook(String bookName, String userName) {
         if (this.isInBookMap(bookName) && this.userInMapByName(userName) && this.bookIsAvailable(bookName)) {
+
             ArrayList<Book> bookList = this.bookMap.get(bookName);
             Book bookObj = bookList.remove(bookList.size() - 1);
 
             User userObj = this.getUserByName(userName);
             userMap.get(userObj).add(bookObj);
+        }
+    }
+
+    public void returnBook (String bookName, String userName) {
+        if (this.bookInUserObj(userName, bookName)) {
+            User userObj = this.getUserByName(userName);
+            Book bookObj = this.removeBookFromUser(userObj, bookName);
+
+            bookMap.get(bookName).add(bookObj);
+        } else {
+            throw new IllegalArgumentException("Book: '" + bookName + "' not found!");
         }
     }
 
@@ -104,6 +116,28 @@ public class LibManager {
     private boolean isInBookMap(String bookName) {
         return this.bookMap.containsKey(bookName);
     }
+
+    private boolean bookInUserObj(String userName, String bookName) {
+        User userObj = this.getUserByName(userName);
+        for (Book bookObj : userMap.get(userObj)) {
+            if (bookObj.getBookName().equals(bookName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Book removeBookFromUser(User userObj, String bookName) {
+        for (Book bookObj : userMap.get(userObj)) {
+            if (bookObj.getBookName().equals(bookName)) {
+                ArrayList<Book> bookList = this.userMap.get(userObj);
+                bookList.remove(bookObj);
+                return bookObj;
+            }
+        } return null;
+    }
+
+
 
 }
     
