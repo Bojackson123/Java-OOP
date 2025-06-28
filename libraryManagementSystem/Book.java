@@ -12,10 +12,7 @@ public class Book {
         this.id = nextId++;
     }
 
-    @Override
-    public String toString() {
-        return "Book ID: " + this.id + ", Name: " + this.name + ", Author: " + this.author;  
-    }
+    // --- ACCESSORS ---
 
     public int getBookId() {
         return this.id;
@@ -27,6 +24,13 @@ public class Book {
 
     public String getBookAuthor() {
         return this.author;
+    }
+
+    // -- HELPER METHODS ---
+
+    @Override
+    public String toString() {
+        return "Book ID: " + this.id + ", Name: " + this.name + ", Author: " + this.author;  
     }
 
 }
